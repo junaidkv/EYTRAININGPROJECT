@@ -31,6 +31,8 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "./node_modules/flexboxgrid/dist/flexboxgrid.min.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -99,6 +101,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -106,5 +109,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "218b4faf-f3fa-43c4-80cc-217bfe0c1b82"
   }
 }

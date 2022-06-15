@@ -1,0 +1,18 @@
+table{
+    width: 100%;
+}
+
+.search-text{
+    outline: none;
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    border-radius: 3px;
+}
+
+search-text:active{
+    border: 1px solid #bbb;
+}
+
+search-text:focus{
+    border: 1px solid #aaa;
+}
