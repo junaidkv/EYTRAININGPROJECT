@@ -8,6 +8,7 @@ namespace StudentAdminApi.Repository
     public interface IStudentRepository
     {
         Task <List<Student>> GetAllStudentDetails();
+        Task<List<Gender>> GetAllGenderDetails();
         Task<Student> GetStudentDetail( Guid studentId);
     }
 }
