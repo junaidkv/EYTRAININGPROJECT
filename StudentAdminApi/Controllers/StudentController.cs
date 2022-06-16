@@ -12,7 +12,7 @@ namespace StudentAdminApi.Controllers
     {
         public IStudentRepository studentRepository;
         public IMapper Mapper { get; }
-        public StudentController(IStudentRepository studentRepository,IMapper mapper)
+        public StudentController(IStudentRepository studentRepository, IMapper mapper)
         {
             this.studentRepository = studentRepository;
             Mapper = mapper;
@@ -36,10 +36,26 @@ namespace StudentAdminApi.Controllers
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 return Ok(Mapper.Map<Student>(students));
             }
+        }
+
+        [HttpPut]
+        [Route("[controller]/{studentId:guid}")]
+        public async Task<IActionResult> UpdateStudentDetails([FromRoute] Guid studentId, [FromBody] UpdateStudentRequest request)
+        {
+            if (await studentRepository.Exists(studentId))
+            {
+                var updatedStudent = await studentRepository.UpdateStudentDetails(studentId, Mapper.Map<DataModels.Student>(request));
+
+                if (updatedStudent != null)
+                {
+                    return Ok(Mapper.Map<Student>(updatedStudent));
+                }
+            }
+            return NotFound();
         }
     }
 }

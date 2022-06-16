@@ -10,5 +10,7 @@ namespace StudentAdminApi.Repository
         Task <List<Student>> GetAllStudentDetails();
         Task<List<Gender>> GetAllGenderDetails();
         Task<Student> GetStudentDetail( Guid studentId);
+        Task<bool> Exists(Guid studentId);
+        Task<Student> UpdateStudentDetails(Guid studentId, Student request);
     }
 }
