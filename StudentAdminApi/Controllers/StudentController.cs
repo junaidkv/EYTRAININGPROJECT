@@ -42,6 +42,19 @@ namespace StudentAdminApi.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("[controller]/{studentId:guid}")]
+        public async Task<IActionResult> DeleteStudentDetails([FromRoute] Guid studentId)
+        {
+            if (await this.studentRepository.Exists(studentId))
+            {
+                var student = await studentRepository.DeleteStudentDetail(studentId);
+
+                return Ok(Mapper.Map<Student>(student));
+            }
+            return NotFound();
+        }
+
         [HttpPut]
         [Route("[controller]/{studentId:guid}")]
         public async Task<IActionResult> UpdateStudentDetails([FromRoute] Guid studentId, [FromBody] UpdateStudentRequest request)
