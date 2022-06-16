@@ -33,4 +33,9 @@ export class StudentService {
     }
     return this.httpClient.put<student>(this.baseApiUrl + "/Student/" + studentId,updateStudentRequest)
   }
+
+  deleteStudentDetails(studentId:string)
+  {
+    return this.httpClient.delete<student>(this.baseApiUrl+"/Student/"+studentId);
+  }
 }
