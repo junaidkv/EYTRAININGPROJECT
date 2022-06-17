@@ -13,5 +13,6 @@ namespace StudentAdminApi.Repository
         Task<Student> DeleteStudentDetail(Guid studentId);
         Task<bool> Exists(Guid studentId);
         Task<Student> UpdateStudentDetails(Guid studentId, Student request);
+        Task<Student> AddStudentDetails (Student request);
     }
 }
