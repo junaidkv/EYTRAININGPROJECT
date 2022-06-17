@@ -1,7 +1,7 @@
 <div class="page-header">
     <div class="container">
         <h1>
-            Students Detail
+            {{this.header}}
         </h1>
     </div>
 </div>
@@ -87,13 +87,21 @@
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="row">
+                <div *ngIf='!isNewStudent' class="row">
                     <div class="col-xs-12">
                         <div class="row between-xs">
                             <button mat-raised-button color="primary"
                                 (click)="onUpdate(student.id,student)">Save</button>
                             <button mat-raised-button color="warn"
                                 (click)="onDelete(student.id)">Delete</button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf='isNewStudent' class="row">
+                    <div class="col-xs-12">
+                        <div class="row between-xs">
+                            <button mat-raised-button color="primary"
+                                (click)="onAddStudent()">Save</button>
                         </div>
                     </div>
                 </div>
