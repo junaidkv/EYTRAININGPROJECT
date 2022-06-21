@@ -13,7 +13,7 @@ import { StudentService } from 'src/app/student.service';
   styleUrls: ['./view-student.component.scss']
 })
 export class ViewStudentComponent implements OnInit {
-
+  displayProfileImageUrl: string = ''
   studentId: string | null | undefined;
   student: student = {
     id: '',
@@ -48,6 +48,8 @@ export class ViewStudentComponent implements OnInit {
           if (this.studentId.toLowerCase() === "Add".toLowerCase()) {
             this.isNewStudent = true;
             this.header = "Add New Student Details"
+            this.setImage();
+
           }
           else {
             this.isNewStudent = false;
@@ -55,11 +57,12 @@ export class ViewStudentComponent implements OnInit {
             this.studentService.getStudentDetail(this.studentId).subscribe(
               (success) => {
                 this.student = success;
+                this.setImage();
               }, (error) => {
                 console.error(error);
               }
             )
-          } 
+          }
         }
       },
     );
@@ -76,54 +79,80 @@ export class ViewStudentComponent implements OnInit {
 
   }
 
+  private setImage(): void
+{
+  if (this.student.profileImageUrl) { 
+    this.displayProfileImageUrl = this.studentService.getImagePath(this.student.profileImageUrl);
+  }
+  else {
+      this.displayProfileImageUrl='/assets/3135715.png'
+  }
+}
 
-  onUpdate(studentId: string, formRequest: Student): void {
-    this.studentService.updateStudentDetails(studentId, formRequest).subscribe(
-      (data) => {
-        console.log(data);
-        this.snackbar.open("Updated Successfully !", undefined, {
+uploadImage(event:any):void{
+  if(this.studentId)
+  {
+    const file:File = event.target.files[0];
+    this.studentService.uploadImage(this.studentId,file).subscribe(
+      (succes)=>{
+        this.student.profileImageUrl = succes
+        this.setImage();
+        this.snackbar.open("Profile Image Updated Successfully !", undefined, {
           duration: 1000,
-        })
-      }, (error) => {
+        });
+      },(error)=>{
         console.log(error)
       }
     )
   }
+}
+onUpdate(studentId: string, formRequest: Student): void {
+  this.studentService.updateStudentDetails(studentId, formRequest).subscribe(
+    (data) => {
+      console.log(data);
+      this.snackbar.open("Updated Successfully !", undefined, {
+        duration: 1000,
+      })
+    }, (error) => {
+      console.log(error)
+    }
+  )
+}
 
-  onAddStudent() {
-    this.studentService.addStudentDetails(this.student).subscribe(
-      (success) => {
-        console.log(success);
-        this.snackbar.open("delete Successfully !", undefined, {
-          duration: 1000,
-        });
-        setTimeout(() => {
-          this.router.navigateByUrl("students/"+success.id),
-            1000
-        })
-      },
-      (error) => {
-        console.log(error);
-      }
-    )
-  }
+onAddStudent() {
+  this.studentService.addStudentDetails(this.student).subscribe(
+    (success) => {
+      console.log(success);
+      this.snackbar.open("delete Successfully !", undefined, {
+        duration: 1000,
+      });
+      setTimeout(() => {
+        this.router.navigateByUrl("students/" + success.id),
+          1000
+      })
+    },
+    (error) => {
+      console.log(error);
+    }
+  )
+}
 
-  onDelete(studentId: string): void {
-    this.studentService.deleteStudentDetails(studentId).subscribe(
-      (data) => {
-        console.log(data);
-        this.snackbar.open("delete Successfully !", undefined, {
-          duration: 1000,
-        });
-        setTimeout(() => {
-          this.router.navigateByUrl("students"),
-            1000
-        })
+onDelete(studentId: string): void {
+  this.studentService.deleteStudentDetails(studentId).subscribe(
+    (data) => {
+      console.log(data);
+      this.snackbar.open("delete Successfully !", undefined, {
+        duration: 1000,
+      });
+      setTimeout(() => {
+        this.router.navigateByUrl("students"),
+          1000
+      })
 
-      }, (error) => {
-        console.log(error)
-      }
-    )
-  }
+    }, (error) => {
+      console.log(error)
+    }
+  )
+}
 
 }

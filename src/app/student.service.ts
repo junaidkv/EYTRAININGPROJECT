@@ -49,8 +49,25 @@ export class StudentService {
     return this.httpClient.post<student>(this.baseApiUrl + "/Student",addStudentRequest)
   }
 
-  deleteStudentDetails(studentId:string)
+  deleteStudentDetails(studentId:string):Observable<student>
   {
     return this.httpClient.delete<student>(this.baseApiUrl+"/Student/"+studentId);
   }
+
+  uploadImage(studentId:string, file:File):Observable<any>
+  {
+    const formData = new FormData();
+    formData.append("profileImage",file);
+    return this.httpClient.post(this.baseApiUrl+'/Student/'+ studentId +'/upload-image',
+    formData, {
+      responseType:'text'
+    })
+
+  }
+
+  getImagePath(relativePath:string)
+  {
+    return `${this.baseApiUrl}/${relativePath}`;
+  }
+
 }
