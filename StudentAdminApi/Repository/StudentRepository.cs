@@ -21,7 +21,7 @@ namespace StudentAdminApi.Repository
 
         public async Task<Student> GetStudentDetail(Guid studentId)
         {
-            return await context.Students.Include(nameof(Gender)).Include(nameof(Address)).FirstOrDefaultAsync(student=> student.id == studentId);
+            return await context.Students.Include(nameof(Gender)).Include(nameof(Address)).FirstOrDefaultAsync(student => student.id == studentId);
         }
 
         public async Task<List<Gender>> GetAllGenderDetails()
@@ -38,15 +38,15 @@ namespace StudentAdminApi.Repository
         {
             var existingStudent = await GetStudentDetail(studentId);
             if (existingStudent != null)
-            { 
+            {
                 existingStudent.FirstName = request.FirstName;
                 existingStudent.LastName = request.LastName;
                 existingStudent.GenderId = request.GenderId;
                 existingStudent.Address.PostalAddress = request.Address.PostalAddress;
                 existingStudent.Address.PhysicalAddress = request.Address.PhysicalAddress;
-                existingStudent.DateOfBirth= request.DateOfBirth;
-                existingStudent.Email= request.Email;
-                
+                existingStudent.DateOfBirth = request.DateOfBirth;
+                existingStudent.Email = request.Email;
+
                 await context.SaveChangesAsync();
                 return existingStudent;
             }
@@ -70,8 +70,20 @@ namespace StudentAdminApi.Repository
         {
             var student = await context.Students.AddAsync(request);
             await context.SaveChangesAsync();
-            
+
             return student.Entity;
+        }
+
+        public async Task<bool> UpdateProfileImage(Guid studentId, string profileImageUrl)
+        {
+            var student = await GetStudentDetail(studentId);
+            if (student != null)
+            {
+                student.ProfileImageUrl = profileImageUrl;
+                await context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 }

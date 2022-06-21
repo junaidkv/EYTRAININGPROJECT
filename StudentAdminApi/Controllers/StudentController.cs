@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentAdminApi.DomainModels;
 using StudentAdminApi.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace StudentAdminApi.Controllers
@@ -11,11 +13,14 @@ namespace StudentAdminApi.Controllers
     public class StudentController : Controller
     {
         public IStudentRepository studentRepository;
+        private readonly IImageRepository imageRepository;
+
         public IMapper Mapper { get; }
-        public StudentController(IStudentRepository studentRepository, IMapper mapper)
+        public StudentController(IStudentRepository studentRepository, IMapper mapper, IImageRepository imageRepository)
         {
             this.studentRepository = studentRepository;
             Mapper = mapper;
+            this.imageRepository = imageRepository;
         }
 
         [HttpGet]
@@ -76,8 +81,31 @@ namespace StudentAdminApi.Controllers
         public async Task<IActionResult> AddStudentDetails([FromBody] AddStudentRequest request)
         {
             var result = await studentRepository.AddStudentDetails(Mapper.Map<DataModels.Student>(request));
-            return CreatedAtAction(nameof(GetStudentDetails),new { studentId = result.id},
+            return CreatedAtAction(nameof(GetStudentDetails), new { studentId = result.id },
                 Mapper.Map<DomainModels.Student>(result));
+        }
+
+        [HttpPost]
+        [Route("[controller]/{studentId:guid}/upload-image")]
+        public async Task<IActionResult> UploadImage([FromRoute] Guid studentId, IFormFile profileImage)
+        {
+            // check if student exists
+
+            if (await studentRepository.Exists(studentId))
+            {
+                var fileName = Guid.NewGuid() + Path.GetExtension(profileImage.FileName);
+                // upload image to local storage
+                var fileImagePath = await imageRepository.Upload(profileImage, fileName);
+                // update the profile image path in database
+                if (await studentRepository.UpdateProfileImage(studentId, fileImagePath))
+                {
+                    return Ok(fileImagePath);
+                }
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error uploading image");
+
+            }
+            return NotFound();
         }
     }
 }

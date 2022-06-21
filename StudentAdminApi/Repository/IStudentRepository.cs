@@ -14,5 +14,6 @@ namespace StudentAdminApi.Repository
         Task<bool> Exists(Guid studentId);
         Task<Student> UpdateStudentDetails(Guid studentId, Student request);
         Task<Student> AddStudentDetails (Student request);
+        Task<bool> UpdateProfileImage(Guid studentId, string profileImageUrl);    
     }
 }

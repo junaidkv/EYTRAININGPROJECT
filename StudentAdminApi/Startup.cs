@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using StudentAdminApi.DataModels;
 using StudentAdminApi.Repository;
+using System.IO;
 
 namespace StudentAdminApi
 {
@@ -36,6 +38,7 @@ namespace StudentAdminApi
             services.AddDbContext<StudentAdminDataContext>
                 (options=>options.UseSqlServer(Configuration.GetConnectionString("StudentAdminPortalDb")));
             services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IImageRepository, LocalStorageImageRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StudentAdminApi", Version = "v1" });
@@ -55,7 +58,12 @@ namespace StudentAdminApi
             }
 
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Resources"))
+                ,RequestPath = "/Resources"
+            });
+                
             app.UseRouting();
             app.UseCors("angularApllication");
             app.UseAuthorization();
