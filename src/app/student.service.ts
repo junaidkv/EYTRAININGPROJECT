@@ -32,7 +32,7 @@ export class StudentService {
       postalAddress: formRequest.address.postalAddress,
       genderId: formRequest.genderId
     }
-    return this.httpClient.put<student>(this.baseApiUrl + "/Student" + studentId,updateStudentRequest)
+    return this.httpClient.put<student>(this.baseApiUrl + "/Student/" + studentId,updateStudentRequest)
   }
 
   addStudentDetails(formRequest: student): Observable<student> {
