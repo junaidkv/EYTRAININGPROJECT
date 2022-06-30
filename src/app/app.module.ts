@@ -50,13 +50,16 @@ import { StudentComponent } from './student/student.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ViewStudentComponent } from './student/view-student/view-student.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { MatTableResponsiveDirective } from './mat-table-responsive.directive';
 
 @NgModule({
   declarations: [
     AppComponent,
     TopnavComponent,
     StudentComponent,
-    ViewStudentComponent
+    ViewStudentComponent,
+    MatTableResponsiveDirective
   ],
   imports: [
     FormsModule,
@@ -99,7 +102,8 @@ import { ViewStudentComponent } from './student/view-student/view-student.compon
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxSpinnerModule,
   ],
   schemas:[
     CUSTOM_ELEMENTS_SCHEMA

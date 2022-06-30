@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { student } from 'src/app/Models/api-models/student.model';
 import { gender } from 'src/app/Models/ui-models/gender.model';
 import { Student } from 'src/app/Models/ui-models/student';
@@ -36,12 +37,13 @@ export class ViewStudentComponent implements OnInit {
     }
   };
   genderList: gender[] = [];
-  constructor(private router: Router, private snackbar: MatSnackBar, private readonly studentService: StudentService, private readonly genderService: GenderService, private readonly route: ActivatedRoute) { }
+  constructor(private spinner: NgxSpinnerService,private router: Router, private snackbar: MatSnackBar, private readonly studentService: StudentService, private readonly genderService: GenderService, private readonly route: ActivatedRoute) { }
   isNewStudent = true;
   header: string = '';
   @ViewChild('studentDetailForm') studentDetailForm?: NgForm;
 
   ngOnInit(): void {
+    this.spinner.show();
     this.route.paramMap.subscribe(
       (params) => {
         this.studentId = params.get('studentId')
@@ -66,12 +68,14 @@ export class ViewStudentComponent implements OnInit {
             )
           }
         }
+        this.spinner.hide();
       },
     );
 
     this.genderService.getAllGenderDetails().subscribe(
       (data) => {
         this.genderList = data;
+        this.spinner.hide();
       },
       (error) => {
         console.log(error);
@@ -91,7 +95,9 @@ export class ViewStudentComponent implements OnInit {
   }
 
   uploadImage(event: any): void {
+    
     if (this.studentId) {
+      this.spinner.show();
       const file: File = event.target.files[0];
       this.studentService.uploadImage(this.studentId, file).subscribe(
         (succes) => {
@@ -100,23 +106,28 @@ export class ViewStudentComponent implements OnInit {
           this.snackbar.open("Profile Image Updated Successfully !", undefined, {
             duration: 1000,
           });
+          this.spinner.hide()
         }, (error) => {
           console.log(error)
+          this.spinner.hide()
         }
       )
     }
   }
   onUpdate(studentId: string, formRequest: Student): void {
-    if (this.studentDetailForm?.form.valid)
-    {
+   
+    if (this.studentDetailForm?.form.valid) {
+      this.spinner.show();
       this.studentService.updateStudentDetails(studentId, formRequest).subscribe(
         (data) => {
           console.log(data);
           this.snackbar.open("Updated Successfully !", undefined, {
             duration: 1000,
           })
+          this.spinner.hide()
         }, (error) => {
           console.log(error)
+          this.spinner.hide()
         }
       )
     }
@@ -125,6 +136,7 @@ export class ViewStudentComponent implements OnInit {
   onAddStudent() {
 
     if (this.studentDetailForm?.form.valid) {
+      this.spinner.show();
       this.studentService.addStudentDetails(this.student).subscribe(
         (success) => {
           console.log(success);
@@ -132,11 +144,13 @@ export class ViewStudentComponent implements OnInit {
             duration: 1000,
           });
           setTimeout(() => {
+            this.spinner.hide();
             this.router.navigateByUrl("students/" + success.id),
               1000
           })
         },
         (error) => {
+          this.spinner.hide();
           console.log(error);
         }
       )
@@ -145,21 +159,27 @@ export class ViewStudentComponent implements OnInit {
   }
 
   onDelete(studentId: string): void {
-    this.studentService.deleteStudentDetails(studentId).subscribe(
-      (data) => {
-        console.log(data);
-        this.snackbar.open("delete Successfully !", undefined, {
-          duration: 1000,
-        });
-        setTimeout(() => {
-          this.router.navigateByUrl("students"),
-            1000
-        })
-
-      }, (error) => {
-        console.log(error)
-      }
-    )
+    if (confirm("Are you sure to delete ")) {
+      this.spinner.show()
+      this.studentService.deleteStudentDetails(studentId).subscribe(
+        (data) => {
+          console.log(data);
+          this.snackbar.open("delete Successfully !", undefined, {
+            duration: 1000,
+          });
+          setTimeout(() => {
+            this.spinner.hide()
+            console.log("Implement delete functionality here");
+            this.router.navigateByUrl("students"),
+              1000
+          })
+          
+        }, (error) => {
+          this.spinner.hide()
+          console.log(error)
+        }
+      )
+    }
   }
 
 }
